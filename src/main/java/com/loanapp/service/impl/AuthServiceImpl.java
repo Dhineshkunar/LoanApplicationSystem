@@ -67,7 +67,6 @@ public class AuthServiceImpl implements AuthService {
         }
         return unsuccessfulLogin();
     }
-//
 //    @Override
 //    public StatusMessage generateCaptcha(LoginRequest request) {
 //        StatusMessage msg = new StatusMessage();
