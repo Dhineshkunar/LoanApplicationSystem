@@ -1,0 +1,16 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven
+target/
+
+# H2 database
+data/*.mv.db
+data/*.trace.db
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
