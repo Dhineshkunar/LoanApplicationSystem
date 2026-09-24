@@ -6,6 +6,7 @@ import com.loanapp.enums.LoanType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Repository;
  * happens once at boot, not per-call.
  */
 @Repository
-public interface LoanRepository extends JpaRepository<LoanApplication, Long> {
+public interface LoanRepository extends JpaRepository<LoanApplication, Long>, JpaSpecificationExecutor<LoanApplication> {
 
     Page<LoanApplication> findByStatus(LoanStatus status, Pageable pageable);
 

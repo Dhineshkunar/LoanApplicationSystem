@@ -2,9 +2,14 @@ package com.loanapp.service;
 
 import com.loanapp.dto.LoanRequestDTO;
 import com.loanapp.dto.LoanResponseDTO;
+import com.loanapp.dto.LoanSearchRequest;
+import com.loanapp.entity.LoanApplication;
 import com.loanapp.enums.LoanStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
 
 /**
  * Service-layer contract for loan operations.
@@ -30,7 +35,7 @@ public interface LoanService {
 
     LoanResponseDTO getLoanById(Long id);
 
-    Page<LoanResponseDTO> getAllLoans(Pageable pageable);
+    List<LoanResponseDTO> getAllLoans(LoanSearchRequest loanSearchRequest);
 
     LoanResponseDTO updateLoan(Long id, LoanRequestDTO requestDTO);
 

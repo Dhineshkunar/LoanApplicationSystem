@@ -2,6 +2,7 @@ package com.loanapp.service.impl;
 
 import com.loanapp.dto.LoanRequestDTO;
 import com.loanapp.dto.LoanResponseDTO;
+import com.loanapp.dto.LoanSearchRequest;
 import com.loanapp.entity.LoanApplication;
 import com.loanapp.enums.LoanStatus;
 import com.loanapp.exception.InvalidStatusTransitionException;
@@ -9,12 +10,18 @@ import com.loanapp.exception.ResourceNotFoundException;
 import com.loanapp.mapper.LoanMapper;
 import com.loanapp.repository.LoanRepository;
 import com.loanapp.service.LoanService;
+import com.loanapp.specification.LoanApplicationSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Business logic for loan applications.
@@ -79,12 +86,20 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Page<LoanResponseDTO> getAllLoans(Pageable pageable) {
-        Page<LoanApplication> page = loanRepository.findAll(pageable);
+    public List<LoanResponseDTO> getAllLoans(LoanSearchRequest loanSearchRequest) {
+
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(loanSearchRequest.getDirection())
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(loanSearchRequest.getPage(), loanSearchRequest.getSize(), Sort.by(sortDirection, loanSearchRequest.getSortBy()));
+        Specification<LoanApplication> specification = LoanApplicationSpecification.getSpecification(loanSearchRequest.getSearch());
+        List<LoanApplication> page = loanRepository.findAll(specification, pageable).getContent();
+//       List< LoanApplication> page =  loanRepository.findAll(pageable).getContent();
         // Page.map() preserves all pagination metadata (totalElements,
         // totalPages, sort, etc.) while transforming the content list —
         // avoids manually rebuilding a PageImpl by hand.
-        return page.map(loanMapper::toResponseDTO);
+        return  page.stream().map(loanMapper::toResponseDTO).toList();
     }
 
     @Override

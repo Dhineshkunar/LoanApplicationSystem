@@ -1,10 +1,9 @@
 package com.loanapp.controller;
 
-import com.loanapp.dto.ApiResponse;
-import com.loanapp.dto.LoanRequestDTO;
-import com.loanapp.dto.LoanResponseDTO;
-import com.loanapp.dto.StatusUpdateDTO;
+import com.loanapp.dto.*;
+import com.loanapp.entity.LoanApplication;
 import com.loanapp.service.LoanService;
+import com.loanapp.specification.LoanApplicationSpecification;
 import com.loanapp.util.AppConstants;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * REST controller for Loan Application CRUD + status transitions.
@@ -107,20 +108,11 @@ public class LoanController {
      * envelope on top without duplicating or losing that metadata.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<LoanResponseDTO>>> getAllLoans(
-            @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-            @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
-            @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
-            @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<ApiResponse<List<LoanResponseDTO>>> getAllLoans(
+            @Valid @ModelAttribute LoanSearchRequest loanSearchRequest){
 
-        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
-
-        log.info("GET /loans - page={}, size={}, sortBy={}, direction={}", page, size, sortBy, direction);
-        Page<LoanResponseDTO> loans = loanService.getAllLoans(pageable);
+       List<LoanResponseDTO> loans = loanService.getAllLoans(loanSearchRequest);
 
         return ResponseEntity.ok(
                 ApiResponse.of(HttpStatus.OK.value(), "Loans fetched successfully", loans));

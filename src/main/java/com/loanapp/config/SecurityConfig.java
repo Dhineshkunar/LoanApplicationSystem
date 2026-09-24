@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 "/Authentication/verifyOtp",
                                 "/Authentication/generateCaptcha",
                                 "/Authentication/verifyname",
-                                "/forgetpassword/checkUserSession",
+                                "/api/v1/**",
                                 "/forgetpassword/otpgeneration",
                                 // H2 Console
                                 "/h2-console/**",
